@@ -590,35 +590,6 @@ function showSkillDetail(id) {
     el.className = 'topbar-tab' + (['catalog','run','how','health','activity','ledger'][i] === 'catalog' ? ' active' : '');
   });
 
-  const runSteps = [
-    {label:'Run triggered', sub:'Scheduled or manual'},
-    {label:'Context assembly', sub:'Skill + client pack + data'},
-    {label:'Agent execution', sub:'claude-sonnet-4-6'},
-    {label:'Validation checks', sub:'Schema, hallucination, brand safety'},
-    {label:'Human approval', sub:'Assigned approver reviews'},
-    {label:'Approve / Reject', sub:'Logged in run ledger'},
-    {label:'Delivery', sub:'Slack / Asana / email'},
-  ];
-
-  const reviewSteps = [
-    {label:'90-day trigger', sub:'Scheduled quality review'},
-    {label:'Pull metrics', sub:'Quality, override rate, load freq'},
-    {label:'SME assessment', sub:'Accuracy + relevance check'},
-    {label:'Decision', sub:'Pass / Update / Deprecate'},
-    {label:'Update if needed', sub:'Version bump, re-test'},
-    {label:'Redeploy', sub:'New version to production'},
-  ];
-
-  const forkSteps = [
-    {label:'Parent skill', sub:'T1 or T2 base'},
-    {label:'Fork request', sub:'Client need identified'},
-    {label:'Client config', sub:'Thresholds, tone, compliance'},
-    {label:'Shadow test', sub:'Validate config'},
-    {label:'Deploy T3/T4', sub:'Client fork live'},
-    {label:'Version monitor', sub:'Track parent updates'},
-  ];
-
-  const hasForkSection = (s.forks && s.forks.length) || parentSkill;
   const isRunnable = s.status === 'production';
 
   $('view-skill-detail').innerHTML = `
@@ -698,32 +669,12 @@ function showSkillDetail(id) {
       </div>
     </div>
 
-    <!-- RUN & DELIVERY FLOW -->
-    <div class="flow-section">
-      <div class="flow-section-title">RUN & DELIVERY FLOW</div>
-      ${vFlow(runSteps, 0)}
+    ${s.reviewDue ? `<div style="margin-bottom:16px;padding:10px 14px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:var(--radius-md);font-size:12px;color:#D97706;font-weight:500">⚠ This skill's 90-day review is overdue. Last reviewed: 2025-12-15. <button onclick="setTab('how')" style="background:none;border:none;color:#D97706;font-weight:700;cursor:pointer;text-decoration:underline;font-size:12px">See governance cadence →</button></div>` : ''}
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:${isRunnable ? '16' : '4'}px">
+      <button onclick="setTab('how')" style="padding:8px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-weight:500;color:var(--gray-600);cursor:pointer;font-family:var(--font-body)">View process flows →</button>
+      ${isRunnable ? `<button class="run-btn" style="width:auto;padding:8px 18px" onclick="setTab('run')">Run this skill in the demo →</button>` : ''}
     </div>
-
-    <!-- REVIEW PROCESS -->
-    <div class="flow-section">
-      <div class="flow-section-title">REVIEW & GOVERNANCE CADENCE</div>
-      ${hFlow(reviewSteps, s.reviewDue ? 1 : 0)}
-      ${s.reviewDue ? `<div style="margin-top:14px;padding:10px 14px;background:#FEF3C7;border-radius:var(--radius-md);font-size:12px;color:#D97706;font-weight:500">⚠ This skill's 90-day review is overdue. Last reviewed: 2025-12-15.</div>` : ''}
-    </div>
-
-    ${hasForkSection ? `
-    <div class="flow-section">
-      <div class="flow-section-title">FORK GOVERNANCE FLOW</div>
-      ${hFlow(forkSteps, parentSkill ? 4 : 2)}
-      <div style="margin-top:14px;font-size:12px;color:var(--gray-500);line-height:1.7">
-        T3/T4 forks inherit the parent skill's core logic and inherit version updates. When a parent skill publishes a new minor or major version, all forks are flagged for review to assess whether the upstream change affects their custom config.
-      </div>
-    </div>` : ''}
-
-    ${isRunnable ? `
-    <div style="margin-bottom:24px">
-      <button class="run-btn" style="max-width:260px" onclick="setTab('run')">Run this skill in the demo →</button>
-    </div>` : ''}
   `;
 }
 
