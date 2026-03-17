@@ -292,6 +292,7 @@
     <div class="topbar-tabs">
       <button class="topbar-tab active" onclick="setTab('catalog')">Catalog</button>
       <button class="topbar-tab" onclick="setTab('run')">Run a skill</button>
+      <button class="topbar-tab" onclick="setTab('how')">How it works</button>
       <button class="topbar-tab" onclick="setTab('health')">Health</button>
       <button class="topbar-tab" onclick="setTab('activity')">Activity</button>
       <button class="topbar-tab" onclick="setTab('ledger')">Ledger</button>
@@ -393,6 +394,11 @@
         </div>
       </div>
 
+      <!-- HOW IT WORKS -->
+      <div id="view-how" style="display:none">
+        <div id="how-content"></div>
+      </div>
+
       <!-- SKILL DETAIL -->
       <div id="view-skill-detail" style="display:none"></div>
 
@@ -463,13 +469,14 @@ const statusBadge = s => badge(s, stBg[s]||'#F3F4F6', stFg[s]||'#6B7280');
 function setTab(t) {
   state.tab = t;
   $('view-skill-detail').style.display = 'none';
-  ['catalog','run','health','activity','ledger'].forEach(v => {
+  ['catalog','run','how','health','activity','ledger'].forEach(v => {
     $('view-'+v).style.display = v===t ? '' : 'none';
   });
   document.querySelectorAll('.topbar-tab').forEach((el,i) => {
-    const tabs = ['catalog','run','health','activity','ledger'];
+    const tabs = ['catalog','run','how','health','activity','ledger'];
     el.className = 'topbar-tab' + (tabs[i]===t?' active':'');
   });
+  if (t==='how') renderHow();
   if (t==='health') renderHealth();
   if (t==='activity') renderActivity();
   if (t==='ledger') renderLedger();
@@ -576,37 +583,12 @@ function showSkillDetail(id) {
 
   const parentSkill = SKILLS.find(ps => ps.forks && ps.forks.includes(s.id));
 
-  ['catalog','run','health','activity','ledger'].forEach(v => $('view-'+v).style.display = 'none');
+  ['catalog','run','how','health','activity','ledger'].forEach(v => $('view-'+v).style.display = 'none');
   $('view-skill-detail').style.display = '';
 
   document.querySelectorAll('.topbar-tab').forEach((el, i) => {
-    el.className = 'topbar-tab' + (['catalog','run','health','activity','ledger'][i] === 'catalog' ? ' active' : '');
+    el.className = 'topbar-tab' + (['catalog','run','how','health','activity','ledger'][i] === 'catalog' ? ' active' : '');
   });
-
-  const lifecycleActive = {draft:1, review:4, production:6, deprecated:7}[s.status] ?? 1;
-  const buildDone = {draft:2, review:5, production:8, deprecated:8}[s.status] ?? 0;
-
-  const lifecycleSteps = [
-    {label:'Idea', sub:'Use case identified'},
-    {label:'Draft', sub:'Prompt written'},
-    {label:'Development', sub:'Built & unit tested'},
-    {label:'Shadow Run', sub:'Live data, no delivery'},
-    {label:'SME Review', sub:'Accuracy sign-off'},
-    {label:'Approval', sub:'Governance gate'},
-    {label:'Production', sub:'Live & monitored'},
-    {label:'Review Cadence', sub:'90-day quality check'},
-  ];
-
-  const buildSteps = [
-    {label:'Identify use case', sub:'Strategy or analyst team'},
-    {label:'Write skill prompt', sub:'Owner drafts in Skills Library'},
-    {label:'Define output schema', sub:'JSON contract agreed'},
-    {label:'Unit test', sub:'Synthetic data + edge cases'},
-    {label:'Shadow run', sub:'Live data, output not delivered'},
-    {label:'SME review', sub:'Quality + accuracy sign-off'},
-    {label:'PM approval', sub:'Governance gate passed'},
-    {label:'Deploy to production', sub:'Versioned & monitored'},
-  ];
 
   const runSteps = [
     {label:'Run triggered', sub:'Scheduled or manual'},
@@ -716,26 +698,14 @@ function showSkillDetail(id) {
       </div>
     </div>
 
-    <!-- SKILL LIFECYCLE -->
+    <!-- RUN & DELIVERY FLOW -->
     <div class="flow-section">
-      <div class="flow-section-title">SKILL LIFECYCLE — current stage highlighted</div>
-      ${hFlow(lifecycleSteps, lifecycleActive)}
-    </div>
-
-    <!-- BUILD PROCESS + RUN FLOW -->
-    <div class="flow-2col">
-      <div class="flow-section" style="margin-bottom:0">
-        <div class="flow-section-title">HOW THIS SKILL WAS BUILT</div>
-        ${vFlow(buildSteps, buildDone)}
-      </div>
-      <div class="flow-section" style="margin-bottom:0">
-        <div class="flow-section-title">RUN & DELIVERY FLOW</div>
-        ${vFlow(runSteps, 0)}
-      </div>
+      <div class="flow-section-title">RUN & DELIVERY FLOW</div>
+      ${vFlow(runSteps, 0)}
     </div>
 
     <!-- REVIEW PROCESS -->
-    <div class="flow-section" style="margin-top:16px">
+    <div class="flow-section">
       <div class="flow-section-title">REVIEW & GOVERNANCE CADENCE</div>
       ${hFlow(reviewSteps, s.reviewDue ? 1 : 0)}
       ${s.reviewDue ? `<div style="margin-top:14px;padding:10px 14px;background:#FEF3C7;border-radius:var(--radius-md);font-size:12px;color:#D97706;font-weight:500">⚠ This skill's 90-day review is overdue. Last reviewed: 2025-12-15.</div>` : ''}
@@ -762,7 +732,7 @@ function backToCatalog() {
   $('view-catalog').style.display = '';
   state.tab = 'catalog';
   document.querySelectorAll('.topbar-tab').forEach((el, i) => {
-    el.className = 'topbar-tab' + (['catalog','run','health','activity','ledger'][i] === 'catalog' ? ' active' : '');
+    el.className = 'topbar-tab' + (['catalog','run','how','health','activity','ledger'][i] === 'catalog' ? ' active' : '');
   });
 }
 
@@ -1083,6 +1053,112 @@ function approveRun(id, status, pStr) {
       </div>
     </div>
     <button class="reset-btn" onclick="initRun();$('run-phase-output').style.display='none';$('run-phase-select').style.display=''">← Run another skill</button>
+  `;
+}
+
+// ── HOW IT WORKS ──────────────────────────────────────────────────────────
+function renderHow() {
+  const lifecycleSteps = [
+    {label:'Idea', sub:'Use case identified'},
+    {label:'Draft', sub:'Prompt written'},
+    {label:'Development', sub:'Built & unit tested'},
+    {label:'Shadow Run', sub:'Live data, no delivery'},
+    {label:'SME Review', sub:'Accuracy sign-off'},
+    {label:'Approval', sub:'Governance gate'},
+    {label:'Production', sub:'Live & monitored'},
+    {label:'Review Cadence', sub:'90-day quality check'},
+  ];
+  const buildSteps = [
+    {label:'Identify use case', sub:'Strategy or analyst team'},
+    {label:'Write skill prompt', sub:'Owner drafts in Skills Library'},
+    {label:'Define output schema', sub:'JSON contract agreed'},
+    {label:'Unit test', sub:'Synthetic data + edge cases'},
+    {label:'Shadow run', sub:'Live data, output not delivered'},
+    {label:'SME review', sub:'Quality + accuracy sign-off'},
+    {label:'PM approval', sub:'Governance gate passed'},
+    {label:'Deploy to production', sub:'Versioned & monitored'},
+  ];
+  const runSteps = [
+    {label:'Run triggered', sub:'Scheduled or manual'},
+    {label:'Context assembly', sub:'Skill + client pack + data'},
+    {label:'Agent execution', sub:'claude-sonnet-4-6'},
+    {label:'Validation checks', sub:'Schema, hallucination, brand safety'},
+    {label:'Human approval', sub:'Assigned approver reviews'},
+    {label:'Approve / Reject', sub:'Logged in run ledger'},
+    {label:'Delivery', sub:'Slack / Asana / email'},
+  ];
+  const reviewSteps = [
+    {label:'90-day trigger', sub:'Scheduled quality review'},
+    {label:'Pull metrics', sub:'Quality, override rate, load freq'},
+    {label:'SME assessment', sub:'Accuracy + relevance check'},
+    {label:'Decision', sub:'Pass / Update / Deprecate'},
+    {label:'Update if needed', sub:'Version bump, re-test'},
+    {label:'Redeploy', sub:'New version to production'},
+  ];
+  const forkSteps = [
+    {label:'Parent skill', sub:'T1 or T2 base'},
+    {label:'Fork request', sub:'Client need identified'},
+    {label:'Client config', sub:'Thresholds, tone, compliance'},
+    {label:'Shadow test', sub:'Validate config'},
+    {label:'Deploy T3/T4', sub:'Client fork live'},
+    {label:'Version monitor', sub:'Track parent updates'},
+  ];
+  const tiers = [
+    {tier:'T1', label:'Platform', color:'#2563EB', bg:'#DBEAFE', desc:'Core infrastructure skills shared across all workflows. Owned by the platform team. Examples: context assembly, anomaly detection, hallucination check.'},
+    {tier:'T2', label:'Domain', color:'#16A34A', bg:'#DCFCE7', desc:'Vertical or channel-specific skills owned by domain leads. Examples: media pacing narrative, SEO health triage, brand safety QA.'},
+    {tier:'T3', label:'Client', color:'#D97706', bg:'#FEF3C7', desc:'Forks of T2 skills with client-specific config: custom thresholds, tone, compliance constraints. Owned by account teams.'},
+    {tier:'T4', label:'Experimental', color:'#6B7280', bg:'#F3F4F6', desc:'Staging-only skills under active development. Not delivered to clients. Owned by individual contributors.'},
+  ];
+
+  $('how-content').innerHTML = `
+    <div class="section-title">How it works</div>
+    <div class="section-sub">The lifecycle, build process, and governance model for the Level Agentic Ops Skills Library</div>
+
+    <div class="flow-section">
+      <div class="flow-section-title">TIER MODEL</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        ${tiers.map(t => `
+          <div style="padding:14px;border-radius:var(--radius-md);border:1.5px solid ${t.color}30;background:${t.bg}50">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+              <span style="padding:2px 8px;border-radius:20px;background:${t.bg};color:${t.color};font-size:10px;font-weight:700;font-family:'Inter Tight',sans-serif">${t.tier}</span>
+              <span style="font-size:12px;font-weight:700;font-family:'Inter Tight',sans-serif;color:${t.color}">${t.label}</span>
+            </div>
+            <div style="font-size:11px;color:var(--gray-600);line-height:1.65">${t.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="flow-section">
+      <div class="flow-section-title">SKILL LIFECYCLE</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">Every skill follows the same eight-stage lifecycle from idea to live production, with mandatory 90-day quality reviews. Skills in the catalog show their current stage highlighted.</div>
+      ${hFlow(lifecycleSteps, 8)}
+    </div>
+
+    <div class="flow-2col">
+      <div class="flow-section" style="margin-bottom:0">
+        <div class="flow-section-title">HOW A SKILL IS BUILT</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">Skills are built by a skill owner working with a subject matter expert. Every skill must complete a shadow run before it enters review.</div>
+        ${vFlow(buildSteps, 8)}
+      </div>
+      <div class="flow-section" style="margin-bottom:0">
+        <div class="flow-section-title">RUN & DELIVERY FLOW</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">Each run assembles context from the skill definition, client pack, and live data. Every output requires human approval before it is delivered.</div>
+        ${vFlow(runSteps, 7)}
+      </div>
+    </div>
+
+    <div class="flow-section" style="margin-top:16px">
+      <div class="flow-section-title">REVIEW & GOVERNANCE CADENCE</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">All production skills are reviewed on a 90-day cadence. Skills with override rates above 5% or quality scores below 75% trigger an early review ahead of schedule.</div>
+      ${hFlow(reviewSteps, 6)}
+    </div>
+
+    <div class="flow-section">
+      <div class="flow-section-title">FORK GOVERNANCE FLOW</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-bottom:16px;line-height:1.6">T3 client forks inherit the core logic of a T2 parent skill. When the parent publishes a new minor or major version, all downstream forks are flagged for alignment review. A fork that falls more than one minor version behind is marked stale.</div>
+      ${hFlow(forkSteps, 6)}
+    </div>
   `;
 }
 
