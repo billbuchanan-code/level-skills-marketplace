@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills Marketplace — Level Agency Agentic Ops</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Inter+Tight:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000000;
+      --white: #FFFFFF;
+      --accent: #86D5F4;
+      --accent-dark: #3BA8CE;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --green: #16A34A;
+      --green-bg: #DCFCE7;
+      --amber: #D97706;
+      --amber-bg: #FEF3C7;
+      --red: #DC2626;
+      --red-bg: #FEE2E2;
+      --blue: #2563EB;
+      --blue-bg: #DBEAFE;
+      --purple: #7C3AED;
+      --purple-bg: #EDE9FE;
+      --border: #E5E7EB;
+      --radius-sm: 4px;
+      --radius: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font-display: 'Inter Tight', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    html, body { height: 100%; }
+    body { font-family: var(--font-body); background: var(--gray-100); color: var(--gray-900); font-size: 14px; line-height: 1.5; }
+
+    /* ── App Shell ── */
+    .app { display: grid; grid-template-rows: 56px 1fr; height: 100vh; overflow: hidden; }
+
+    /* ── Topbar ── */
+    .topbar { background: var(--black); display: flex; align-items: center; padding: 0 24px; gap: 16px; flex-shrink: 0; }
+    .topbar-logo { font-family: var(--font-display); font-weight: 900; font-size: 15px; color: var(--white); letter-spacing: .05em; }
+    .topbar-sep { width: 1px; height: 20px; background: #333; }
+    .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--white); flex: 1; }
+    .demo-chip { font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 3px 8px; border-radius: 20px; background: var(--accent); color: var(--black); }
+    .topbar-tabs { display: flex; gap: 2px; margin-left: 8px; }
+    .topbar-tab { padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: var(--radius); color: #999; border: none; background: transparent; transition: all .15s; }
+    .topbar-tab:hover { color: var(--white); background: #1a1a1a; }
+    .topbar-tab.active { color: var(--black); background: var(--accent); }
+
+    /* ── Body ── */
+    .body { display: grid; grid-template-columns: 224px 1fr; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar { background: var(--white); border-right: 1px solid var(--border); overflow-y: auto; padding: 20px 0; }
+    .sb-section { margin-bottom: 24px; padding: 0 12px; }
+    .sb-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--gray-400); margin-bottom: 6px; padding: 0 4px; }
+    .sb-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--radius); cursor: pointer; font-size: 12px; font-weight: 500; color: var(--gray-600); border: none; background: transparent; width: 100%; text-align: left; transition: all .12s; }
+    .sb-item:hover { background: var(--gray-100); color: var(--gray-900); }
+    .sb-item.active { background: var(--gray-900); color: var(--white); }
+    .sb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sb-count { margin-left: auto; font-size: 10px; background: var(--gray-100); color: var(--gray-500); padding: 1px 7px; border-radius: 20px; }
+    .sb-item.active .sb-count { background: #333; color: #aaa; }
+    .sb-divider { height: 1px; background: var(--border); margin: 4px 12px 16px; }
+    .quick-run-btn { width: calc(100% - 24px); margin: 0 12px; padding: 9px; background: var(--black); color: var(--white); border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 12px; font-weight: 700; font-family: var(--font-display); letter-spacing: .02em; transition: background .15s; }
+    .quick-run-btn:hover { background: var(--gray-800); }
+
+    /* ── Main ── */
+    .main { overflow-y: auto; padding: 24px; background: var(--gray-100); }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .stat-label { font-size: 11px; font-weight: 500; color: var(--gray-400); letter-spacing: .04em; margin-bottom: 6px; }
+    .stat-value { font-family: var(--font-display); font-weight: 900; font-size: 28px; line-height: 1; margin-bottom: 4px; }
+    .stat-sub { font-size: 11px; color: var(--gray-400); }
+
+    /* ── Search ── */
+    .search-row { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+    .search-input { flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px; font-family: var(--font-body); background: var(--white); color: var(--gray-900); outline: none; transition: border-color .15s; }
+    .search-input:focus { border-color: var(--black); }
+    .filter-chip { padding: 7px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 11px; font-weight: 500; cursor: pointer; background: var(--white); color: var(--gray-600); transition: all .12s; white-space: nowrap; }
+    .filter-chip:hover { border-color: var(--gray-400); }
+    .filter-chip.active { background: var(--black); color: var(--white); border-color: var(--black); }
+
+    /* ── Skill Grid ── */
+    .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 12px; }
+    .skill-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all .15s; position: relative; }
+    .skill-card:hover { border-color: var(--gray-400); box-shadow: 0 2px 8px rgba(0,0,0,.06); transform: translateY(-1px); }
+    .skill-card.featured { border-color: var(--black); }
+    .skill-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 6px; }
+    .skill-card-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+    .skill-name { font-family: var(--font-display); font-weight: 700; font-size: 14px; margin-bottom: 4px; line-height: 1.3; }
+    .skill-id { font-family: var(--font-mono); font-size: 10px; color: var(--gray-400); margin-bottom: 8px; }
+    .skill-desc { font-size: 12px; color: var(--gray-500); line-height: 1.6; margin-bottom: 12px; }
+    .skill-footer { display: flex; align-items: center; gap: 6px; }
+    .skill-owner { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+    .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--gray-600); flex-shrink: 0; }
+    .owner-name { font-size: 11px; color: var(--gray-400); }
+    .quality-bar { height: 3px; background: var(--gray-100); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+    .quality-fill { height: 100%; border-radius: 2px; }
+
+    /* ── Badges / Pills ── */
+    .badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; display: inline-block; }
+    .badge-t1 { background: var(--blue-bg); color: var(--blue); }
+    .badge-t2 { background: var(--green-bg); color: var(--green); }
+    .badge-t3 { background: var(--amber-bg); color: var(--amber); }
+    .badge-t4 { background: var(--gray-100); color: var(--gray-500); }
+    .badge-production { background: var(--green-bg); color: var(--green); }
+    .badge-review { background: var(--amber-bg); color: var(--amber); }
+    .badge-draft { background: var(--gray-100); color: var(--gray-500); }
+    .badge-deprecated { background: var(--red-bg); color: var(--red); }
+    .badge-overdue { background: var(--amber-bg); color: var(--amber); }
+
+    /* ── Run View ── */
+    .run-container { max-width: 960px; }
+    .steps-bar { display: flex; align-items: center; margin-bottom: 24px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 20px; }
+    .step { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--gray-400); flex-shrink: 0; }
+    .step.active { color: var(--black); }
+    .step.done { color: var(--green); }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+    .step.done .step-num { background: var(--green); border-color: var(--green); color: var(--white); }
+    .step.active .step-num { background: var(--black); border-color: var(--black); color: var(--white); }
+    .step-line { flex: 1; height: 1px; background: var(--border); min-width: 12px; }
+    .step-line.done { background: var(--green); }
+
+    .run-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .run-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .run-card-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; font-family: var(--font-display); }
+    .run-card-body { padding: 16px; }
+    .run-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--gray-400); margin-bottom: 6px; }
+    .skill-context-box { background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 11px; font-family: var(--font-mono); color: var(--gray-600); line-height: 1.7; max-height: 130px; overflow-y: auto; }
+    .meta-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+    .meta-chip { padding: 6px 10px; background: var(--gray-50); border-radius: var(--radius); font-size: 11px; }
+    .meta-chip-label { color: var(--gray-400); margin-bottom: 2px; font-size: 10px; }
+    .meta-chip-value { font-weight: 700; font-family: var(--font-display); font-size: 12px; }
+    textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 11px; color: var(--gray-900); background: var(--gray-50); resize: vertical; line-height: 1.7; outline: none; transition: border-color .15s; }
+    textarea:focus { border-color: var(--black); background: var(--white); }
+    .run-btn { width: 100%; padding: 11px; background: var(--black); color: var(--white); border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 13px; font-weight: 700; font-family: var(--font-display); margin-top: 12px; transition: background .15s; letter-spacing: .02em; }
+    .run-btn:hover { background: var(--gray-800); }
+    .run-btn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+    /* ── Stream output ── */
+    .stream-box { background: var(--gray-900); border-radius: var(--radius-md); padding: 14px; font-family: var(--font-mono); font-size: 11px; color: #a3e635; line-height: 1.7; min-height: 180px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+    .stream-cursor { display: inline-block; width: 8px; height: 14px; background: #a3e635; vertical-align: text-bottom; animation: blink .7s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+    /* ── Narrative output ── */
+    .nar-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 16px; }
+    .nar-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .rag-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .rag-green { background: var(--green); }
+    .rag-amber { background: var(--amber); }
+    .rag-red { background: var(--red); }
+    .nar-title { font-family: var(--font-display); font-weight: 700; font-size: 14px; flex: 1; }
+    .nar-body { padding: 18px; }
+    .nar-summary { font-size: 13px; color: var(--gray-700); line-height: 1.8; margin-bottom: 16px; }
+    .anomaly-card { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 8px; background: var(--gray-50); }
+    .anomaly-card:last-child { margin-bottom: 0; }
+    .anomaly-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .anomaly-name { font-weight: 700; font-size: 12px; flex: 1; font-family: var(--font-display); }
+    .variance-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .variance-neg { background: var(--red-bg); color: var(--red); }
+    .variance-pos { background: var(--amber-bg); color: var(--amber); }
+    .conf-track { height: 4px; background: var(--gray-200); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+    .conf-fill { height: 100%; border-radius: 2px; }
+    .anomaly-action { font-size: 12px; color: var(--gray-500); line-height: 1.6; font-style: italic; }
+    .run-meta { display: flex; gap: 16px; font-size: 11px; color: var(--gray-400); padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--border); }
+    .run-meta code { font-family: var(--font-mono); font-size: 10px; }
+
+    /* ── Validation checks ── */
+    .checks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 16px; }
+    .check-item { padding: 7px 10px; background: var(--green-bg); border-radius: var(--radius); font-size: 11px; font-weight: 500; color: var(--green); display: flex; align-items: center; gap: 5px; }
+    .check-item::before { content: '✓'; font-weight: 900; }
+
+    /* ── Approval banner ── */
+    .approval-banner { background: var(--white); border: 1px solid var(--border); border-left: 4px solid var(--amber); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; }
+    .approval-text { flex: 1; }
+    .approval-title { font-family: var(--font-display); font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+    .approval-sub { font-size: 11px; color: var(--gray-500); line-height: 1.5; }
+    .approve-btn { padding: 9px 18px; background: var(--green); color: var(--white); border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 12px; font-weight: 700; font-family: var(--font-display); flex-shrink: 0; transition: opacity .15s; }
+    .approve-btn:hover { opacity: .85; }
+    .reject-btn { padding: 9px 14px; background: transparent; color: var(--red); border: 1px solid var(--red); border-radius: var(--radius-md); cursor: pointer; font-size: 12px; font-weight: 500; flex-shrink: 0; transition: opacity .15s; }
+    .reject-btn:hover { opacity: .75; }
+
+    /* ── Slack mock ── */
+    .slack-mock { background: #1a1d21; border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+    .slack-header { display: flex; align-items: center; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid #2c2d30; margin-bottom: 14px; }
+    .slack-channel { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--white); }
+    .slack-time { font-size: 11px; color: #4b5563; margin-left: auto; }
+    .slack-msg { display: flex; gap: 12px; }
+    .slack-avatar { width: 36px; height: 36px; border-radius: 6px; background: #4A154B; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: var(--white); flex-shrink: 0; font-family: var(--font-display); }
+    .slack-content { flex: 1; }
+    .slack-name { font-weight: 700; color: var(--white); font-size: 13px; margin-bottom: 2px; }
+    .slack-app-badge { font-size: 9px; background: #2c2d30; color: #9ca3af; padding: 1px 5px; border-radius: 3px; margin-left: 5px; vertical-align: middle; }
+    .slack-rag-pill { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-bottom: 8px; font-family: var(--font-display); }
+    .slack-rag-amber { background: #854F0B; color: #FEF3C7; }
+    .slack-rag-green { background: #14532D; color: #D1FAE5; }
+    .slack-rag-red { background: #7F1D1D; color: #FEE2E2; }
+    .slack-text { font-size: 12px; color: #D1D5DB; line-height: 1.7; }
+    .slack-flag-item { background: rgba(255,255,255,.04); border-radius: 4px; padding: 6px 10px; margin: 4px 0; font-size: 11px; color: #9CA3AF; }
+    .slack-flag-item strong { color: var(--white); }
+    .slack-actions { display: flex; gap: 6px; margin-top: 12px; }
+    .slack-action-btn { padding: 5px 12px; background: transparent; border: 1px solid #374151; border-radius: 4px; color: #9CA3AF; cursor: pointer; font-size: 11px; transition: border-color .12s; }
+    .slack-action-btn:hover { border-color: #6B7280; color: var(--white); }
+
+    /* ── Ledger ── */
+    .ledger-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .ledger-table th { text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--gray-400); padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--gray-50); }
+    .ledger-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .ledger-table tr:last-child td { border-bottom: none; }
+    .ledger-table tr:hover td { background: var(--gray-50); }
+    .ledger-run-id { font-family: var(--font-mono); font-size: 10px; color: var(--blue); }
+    .empty-ledger { text-align: center; padding: 40px; color: var(--gray-400); font-size: 13px; }
+
+    /* ── Health view ── */
+    .health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .health-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+    .health-card-title { font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .04em; color: var(--gray-400); margin-bottom: 14px; }
+    .health-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .health-row:last-child { border-bottom: none; }
+    .health-rank { width: 20px; font-size: 10px; color: var(--gray-400); text-align: center; flex-shrink: 0; }
+    .health-name { flex: 1; font-weight: 500; }
+    .health-track { width: 80px; height: 4px; background: var(--gray-100); border-radius: 2px; overflow: hidden; }
+    .health-fill { height: 100%; border-radius: 2px; }
+    .health-val { font-weight: 700; font-size: 12px; min-width: 36px; text-align: right; font-family: var(--font-display); }
+
+    /* ── Activity ── */
+    .activity-feed { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .activity-row { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .activity-row:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+    .activity-text { flex: 1; font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+    .activity-text strong { color: var(--gray-900); }
+    .activity-time { font-size: 11px; color: var(--gray-400); white-space: nowrap; }
+
+    /* ── Misc ── */
+    .section-title { font-family: var(--font-display); font-weight: 900; font-size: 18px; margin-bottom: 4px; }
+    .section-sub { font-size: 12px; color: var(--gray-400); margin-bottom: 16px; }
+    .card-white { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); font-size: 13px; }
+    .reset-btn { padding: 8px 16px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; font-size: 12px; color: var(--gray-500); font-family: var(--font-body); }
+    .reset-btn:hover { border-color: var(--gray-400); color: var(--gray-700); }
+    .section-label { font-size: 10px; font-weight: 700; letter-spacing: .07em; color: var(--gray-400); margin-bottom: 8px; }
+    .info-banner { background: var(--blue-bg); border: 1px solid #93C5FD; border-radius: var(--radius-md); padding: 10px 14px; font-size: 12px; color: var(--blue); margin-bottom: 14px; }
+    .skill-select-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .skill-select-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; cursor: pointer; transition: all .15s; }
+    .skill-select-card:hover { border-color: var(--black); }
+    .skill-select-card.selected { border: 2px solid var(--black); }
+    .skill-select-card.disabled { opacity: .45; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <span class="topbar-logo">LEVEL</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-title">Skills Marketplace</span>
+    <span class="demo-chip">LIVE DEMO</span>
+    <div class="topbar-tabs">
+      <button class="topbar-tab active" onclick="setTab('catalog')">Catalog</button>
+      <button class="topbar-tab" onclick="setTab('run')">Run a skill</button>
+      <button class="topbar-tab" onclick="setTab('health')">Health</button>
+      <button class="topbar-tab" onclick="setTab('activity')">Activity</button>
+      <button class="topbar-tab" onclick="setTab('ledger')">Ledger</button>
+    </div>
+  </div>
+
+  <div class="body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">TIER</div>
+        <button class="sb-item active" onclick="filter('tier','all',this)"><div class="sb-dot" style="background:#6B7280"></div>All skills<span class="sb-count" id="cnt-all">15</span></button>
+        <button class="sb-item" onclick="filter('tier','T1',this)"><div class="sb-dot" style="background:#2563EB"></div>T1 Platform<span class="sb-count" id="cnt-t1">5</span></button>
+        <button class="sb-item" onclick="filter('tier','T2',this)"><div class="sb-dot" style="background:#16A34A"></div>T2 Domain<span class="sb-count" id="cnt-t2">7</span></button>
+        <button class="sb-item" onclick="filter('tier','T3',this)"><div class="sb-dot" style="background:#D97706"></div>T3 Client<span class="sb-count" id="cnt-t3">2</span></button>
+        <button class="sb-item" onclick="filter('tier','T4',this)"><div class="sb-dot" style="background:#9CA3AF"></div>T4 Experimental<span class="sb-count" id="cnt-t4">1</span></button>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-label">DOMAIN</div>
+        <button class="sb-item" onclick="filter('domain','all',this)"><div class="sb-dot" style="background:#6B7280"></div>All domains</button>
+        <button class="sb-item" onclick="filter('domain','platform',this)"><div class="sb-dot" style="background:#2563EB"></div>Platform</button>
+        <button class="sb-item" onclick="filter('domain','media',this)"><div class="sb-dot" style="background:#16A34A"></div>Media</button>
+        <button class="sb-item" onclick="filter('domain','seo',this)"><div class="sb-dot" style="background:#D97706"></div>SEO</button>
+        <button class="sb-item" onclick="filter('domain','creative',this)"><div class="sb-dot" style="background:#DB2777"></div>Creative</button>
+        <button class="sb-item" onclick="filter('domain','web',this)"><div class="sb-dot" style="background:#7C3AED"></div>Web</button>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-label">STATUS</div>
+        <button class="sb-item" onclick="filter('status','production',this)"><div class="sb-dot" style="background:#16A34A"></div>Production</button>
+        <button class="sb-item" onclick="filter('status','review',this)"><div class="sb-dot" style="background:#D97706"></div>In review</button>
+        <button class="sb-item" onclick="filter('status','draft',this)"><div class="sb-dot" style="background:#9CA3AF"></div>Draft</button>
+        <button class="sb-item" onclick="filter('status','deprecated',this)"><div class="sb-dot" style="background:#DC2626"></div>Deprecated</button>
+      </div>
+      <div class="sb-divider"></div>
+      <button class="quick-run-btn" onclick="setTab('run')">Run XYZ Co pacing demo →</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main" id="main-area">
+
+      <!-- CATALOG -->
+      <div id="view-catalog">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">TOTAL SKILLS</div><div class="stat-value">15</div><div class="stat-sub">5 in production</div></div>
+          <div class="stat-card"><div class="stat-label">AVG QUALITY</div><div class="stat-value" style="color:var(--green)">89%</div><div class="stat-sub">production skills</div></div>
+          <div class="stat-card"><div class="stat-label">LIVE RUNS TODAY</div><div class="stat-value" id="stat-runs">0</div><div class="stat-sub">via this demo</div></div>
+          <div class="stat-card"><div class="stat-label">REVIEW OVERDUE</div><div class="stat-value" style="color:var(--amber)">2</div><div class="stat-sub">action needed</div></div>
+        </div>
+        <div class="search-row">
+          <input class="search-input" id="search-box" type="text" placeholder="Search skills by name, ID, or tag..." oninput="renderCatalog()">
+          <button class="filter-chip" id="chip-overdue" onclick="toggleChip('overdue')">Overdue review</button>
+          <button class="filter-chip" id="chip-stale" onclick="toggleChip('stale')">Stale forks</button>
+        </div>
+        <div class="skill-grid" id="skill-grid"></div>
+      </div>
+
+      <!-- RUN -->
+      <div id="view-run" style="display:none">
+        <div class="run-container">
+          <div class="steps-bar" id="steps-bar"></div>
+          <div id="run-phase-select"></div>
+          <div id="run-phase-data" style="display:none"></div>
+          <div id="run-phase-running" style="display:none"></div>
+          <div id="run-phase-output" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- HEALTH -->
+      <div id="view-health" style="display:none">
+        <div class="section-title">Library health</div>
+        <div class="section-sub">Quality scores and analyst signal across all production skills</div>
+        <div class="health-grid" id="health-content"></div>
+        <div class="card-white" id="attention-card" style="padding:18px"></div>
+      </div>
+
+      <!-- ACTIVITY -->
+      <div id="view-activity" style="display:none">
+        <div class="section-title">Activity feed</div>
+        <div class="section-sub">Recent changes across the skills library</div>
+        <div class="activity-feed" id="activity-feed"></div>
+      </div>
+
+      <!-- LEDGER -->
+      <div id="view-ledger" style="display:none">
+        <div class="section-title">Run ledger</div>
+        <div class="section-sub">Append-only audit log of all agent runs in this session</div>
+        <div class="card-white" style="overflow:hidden">
+          <table class="ledger-table" id="ledger-table">
+            <thead><tr>
+              <th>RUN ID</th><th>SKILL</th><th>CLIENT</th><th>STATUS</th>
+              <th>FLAGS</th><th>CONFIDENCE</th><th>TIME</th>
+            </tr></thead>
+            <tbody id="ledger-body">
+              <tr><td colspan="7" class="empty-ledger">No runs yet — go to "Run a skill" to generate your first ledger entry.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const SKILLS = [
+  {id:'context-assembly',name:'Context assembly',tier:'T1',domain:'platform',status:'production',version:'2.3.0',owner:'alex.chen',sme:'alex.chen',quality:.94,loadFreq:.98,overrideRate:.02,reviewDue:false,forks:[],desc:'Assembles skill + client pack + data slice within token budget for any workflow.',tags:['core','assembly','context']},
+  {id:'anomaly-detection',name:'Anomaly detection',tier:'T1',domain:'platform',status:'production',version:'1.4.1',owner:'alex.chen',sme:'alex.chen',quality:.91,loadFreq:.96,overrideRate:.03,reviewDue:false,forks:[],desc:'Statistical Z-score + IQR anomaly flagging with confidence score for any metric series.',tags:['core','anomaly','stats']},
+  {id:'hallucination-check',name:'Hallucination check',tier:'T1',domain:'platform',status:'production',version:'1.1.0',owner:'priya.sharma',sme:'alex.chen',quality:.97,loadFreq:.95,overrideRate:.01,reviewDue:false,forks:[],desc:'Verifies all numeric claims in output are traceable to source data in the run ledger.',tags:['core','quality','validation']},
+  {id:'risk-scoring',name:'Risk scoring',tier:'T1',domain:'platform',status:'review',version:'1.0.0-rc1',owner:'priya.sharma',sme:'alex.chen',quality:.82,loadFreq:0,overrideRate:0,reviewDue:false,forks:[],desc:'Computes run-level risk score (0.0–1.0) from data quality, action scope, and model confidence.',tags:['risk','governance']},
+  {id:'context-compression',name:'Context compression',tier:'T1',domain:'platform',status:'draft',version:'0.1.0',owner:'alex.chen',sme:'alex.chen',quality:0,loadFreq:0,overrideRate:0,reviewDue:false,forks:[],desc:'Summarises long-running context to fit within the model context window.',tags:['core','compression']},
+  {id:'benchmark-fetch',name:'Benchmark fetch',tier:'T1',domain:'platform',status:'production',version:'1.0.2',owner:'priya.sharma',sme:'priya.sharma',quality:.93,loadFreq:.78,overrideRate:.04,reviewDue:true,forks:[],desc:'Retrieves anonymized vertical-median benchmarks from aggregates store. Enforces N≥5 gate.',tags:['benchmarks','cross-client']},
+  {id:'media-pacing-narrative',name:'Media pacing narrative',tier:'T2',domain:'media',status:'production',version:'1.3.0',owner:'sarah.kim',sme:'tom.jones',quality:.89,loadFreq:.99,overrideRate:.06,reviewDue:false,forks:['media-pacing-narrative-xyzco','media-pacing-narrative-acme'],desc:'Daily pacing health summary with anomaly flags, spend snapshot, and recommended actions.',tags:['pacing','narrative','media']},
+  {id:'weekly-narrative',name:'Weekly narrative',tier:'T2',domain:'media',status:'production',version:'1.1.0',owner:'sarah.kim',sme:'tom.jones',quality:.87,loadFreq:.92,overrideRate:.07,reviewDue:false,forks:[],desc:'Weekly performance narrative including cross-client benchmark comparison section.',tags:['weekly','narrative','benchmarks']},
+  {id:'seo-health-triage',name:'SEO health triage',tier:'T2',domain:'seo',status:'production',version:'1.0.1',owner:'james.obi',sme:'james.obi',quality:.88,loadFreq:.85,overrideRate:.05,reviewDue:false,forks:[],desc:'GSC + GA4 health narrative covering crawl, indexing, traffic, and Core Web Vitals.',tags:['seo','gsc','ga4']},
+  {id:'geo-citation-check',name:'GEO citation check',tier:'T2',domain:'seo',status:'production',version:'1.0.0',owner:'james.obi',sme:'james.obi',quality:.83,loadFreq:.72,overrideRate:.08,reviewDue:true,forks:[],desc:'Checks client query sets against AI Overview, ChatGPT, and Perplexity for citation presence.',tags:['geo','citations','ai-overview']},
+  {id:'geo-brief-gen',name:'GEO brief generation',tier:'T2',domain:'seo',status:'review',version:'1.0.0-rc2',owner:'james.obi',sme:'james.obi',quality:.78,loadFreq:0,overrideRate:0,reviewDue:false,forks:[],desc:'GEO-aware content brief with entity outline, schema recs, and AI citation signals.',tags:['geo','brief','content']},
+  {id:'brand-safety-qa',name:'Brand safety QA',tier:'T2',domain:'creative',status:'production',version:'1.0.0',owner:'mia.torres',sme:'mia.torres',quality:.95,loadFreq:.91,overrideRate:.03,reviewDue:false,forks:[],desc:'Voice alignment check, compliance flags, and format spec validation for AI-generated copy.',tags:['brand','compliance','qa']},
+  {id:'creative-variant-gen',name:'Creative variant generation',tier:'T2',domain:'creative',status:'production',version:'1.0.0',owner:'mia.torres',sme:'mia.torres',quality:.86,loadFreq:.88,overrideRate:.09,reviewDue:false,forks:[],desc:'Generates 3–5 on-brand copy variants for flagged creative with tone adherence.',tags:['creative','copy','variants']},
+  {id:'media-pacing-narrative-xyzco',name:'Media pacing (XYZ Co)',tier:'T3',domain:'media',status:'production',version:'1.0.0',owner:'rachel.park',sme:'tom.jones',quality:.88,loadFreq:.94,overrideRate:.06,reviewDue:false,stale:true,forks:[],desc:'Fork: 10% anomaly threshold, FCA compliance constraints, formal register.',tags:['pacing','t3','xyzco','fca']},
+  {id:'media-pacing-narrative-acme',name:'Media pacing (Acme Corp)',tier:'T3',domain:'media',status:'production',version:'1.1.0',owner:'rachel.park',sme:'tom.jones',quality:.91,loadFreq:.97,overrideRate:.04,reviewDue:false,forks:[],desc:'Fork: formal tone, Acme brand vocabulary, retail KPI labels.',tags:['pacing','t3','acme']},
+  {id:'experimental-geo-v2',name:'GEO citation check v2',tier:'T4',domain:'seo',status:'draft',version:'0.2.0',owner:'james.obi',sme:null,quality:0,loadFreq:0,overrideRate:0,reviewDue:false,forks:[],desc:'Multi-engine GEO citation scoring with entity prominence weighting. Staging only.',tags:['geo','experimental']},
+];
+
+const ACTIVITY = [
+  {color:'#16A34A',text:'<strong>brand-safety-qa</strong> v1.0.0 deployed to production by <strong>mia.torres</strong>',time:'2h ago'},
+  {color:'#2563EB',text:'PR #47 opened: <strong>geo-brief-gen</strong> v1.0.0-rc2 awaiting SME review from <strong>james.obi</strong>',time:'5h ago'},
+  {color:'#D97706',text:'Fork stale alert: <strong>media-pacing-narrative-xyzco</strong> is 1 minor version behind parent',time:'Yesterday'},
+  {color:'#D97706',text:'Review overdue: <strong>benchmark-fetch</strong> last reviewed 2025-12-15 — 90-day cadence exceeded',time:'Yesterday'},
+  {color:'#16A34A',text:'<strong>weekly-narrative</strong> v1.1.0 merged and deployed — added benchmark section support',time:'2d ago'},
+  {color:'#DC2626',text:'Quality alert: <strong>geo-citation-check</strong> analyst override rate rose to 8% (threshold: 5%)',time:'3d ago'},
+  {color:'#2563EB',text:'Shadow run complete for <strong>risk-scoring</strong> v1.0.0-rc1 — quality score 0.82, proceeding to review',time:'3d ago'},
+  {color:'#9CA3AF',text:'<strong>context-compression</strong> v0.1.0 draft created by <strong>alex.chen</strong>',time:'4d ago'},
+  {color:'#16A34A',text:'<strong>geo-citation-check</strong> v1.0.0 deployed — first GEO monitoring skill live',time:'5d ago'},
+  {color:'#D97706',text:'Ownership transfer: <strong>creative-variant-gen</strong> transferred to <strong>mia.torres</strong>',time:'6d ago'},
+  {color:'#16A34A',text:'<strong>seo-health-triage</strong> v1.0.1 patch deployed — fixed GSC property mapping edge case',time:'1w ago'},
+  {color:'#2563EB',text:'Quarterly library audit complete — 0 orphaned skills, 2 overdue, 1 fork stale',time:'1w ago'},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let state = {
+  tab: 'catalog',
+  tier: 'all', domain: 'all', status: '',
+  chips: { overdue: false, stale: false },
+  runStep: 0,
+  runCount: 0,
+  ledger: [],
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const qcol = q => q >= .9 ? '#16A34A' : q >= .75 ? '#D97706' : '#DC2626';
+const domCol = d => ({platform:'#2563EB',media:'#16A34A',seo:'#D97706',creative:'#DB2777',web:'#7C3AED'})[d]||'#6B7280';
+const initials = n => n.split('.').map(p=>p[0].toUpperCase()).join('');
+const tierBg = {T1:'#DBEAFE',T2:'#DCFCE7',T3:'#FEF3C7',T4:'#F3F4F6'};
+const tierFg = {T1:'#2563EB',T2:'#16A34A',T3:'#D97706',T4:'#6B7280'};
+const stBg = {production:'#DCFCE7',review:'#FEF3C7',draft:'#F3F4F6',deprecated:'#FEE2E2'};
+const stFg = {production:'#16A34A',review:'#D97706',draft:'#6B7280',deprecated:'#DC2626'};
+const badge = (text,bg,fg) => `<span class="badge" style="background:${bg};color:${fg}">${text}</span>`;
+const tierBadge = t => badge(t, tierBg[t]||'#F3F4F6', tierFg[t]||'#6B7280');
+const statusBadge = s => badge(s, stBg[s]||'#F3F4F6', stFg[s]||'#6B7280');
+
+// ── TAB ───────────────────────────────────────────────────────────────────
+function setTab(t) {
+  state.tab = t;
+  ['catalog','run','health','activity','ledger'].forEach(v => {
+    $('view-'+v).style.display = v===t ? '' : 'none';
+  });
+  document.querySelectorAll('.topbar-tab').forEach((el,i) => {
+    const tabs = ['catalog','run','health','activity','ledger'];
+    el.className = 'topbar-tab' + (tabs[i]===t?' active':'');
+  });
+  if (t==='health') renderHealth();
+  if (t==='activity') renderActivity();
+  if (t==='ledger') renderLedger();
+  if (t==='run') initRun();
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────
+function filter(type, val, el) {
+  state[type] = val;
+  const section = el.closest('.sb-section');
+  section.querySelectorAll('.sb-item').forEach(i => i.className='sb-item');
+  el.className = 'sb-item active';
+  renderCatalog();
+}
+
+function toggleChip(name) {
+  state.chips[name] = !state.chips[name];
+  $('chip-'+name).className = 'filter-chip' + (state.chips[name]?' active':'');
+  renderCatalog();
+}
+
+// ── CATALOG ───────────────────────────────────────────────────────────────
+function getFiltered() {
+  const q = ($('search-box')||{value:''}).value.toLowerCase();
+  return SKILLS.filter(s => {
+    if (state.tier!=='all' && s.tier!==state.tier) return false;
+    if (state.domain!=='all' && s.domain!==state.domain) return false;
+    if (state.status && s.status!==state.status) return false;
+    if (state.chips.overdue && !s.reviewDue) return false;
+    if (state.chips.stale && !s.stale) return false;
+    if (q && !s.id.includes(q) && !s.name.toLowerCase().includes(q) && !s.tags.join(' ').includes(q)) return false;
+    return true;
+  });
+}
+
+function renderCatalog() {
+  const skills = getFiltered();
+  const grid = $('skill-grid');
+  if (!skills.length) {
+    grid.innerHTML = '<div class="empty-state">No skills match your filters.</div>';
+    return;
+  }
+  grid.innerHTML = skills.map(s => `
+    <div class="skill-card${s.id==='media-pacing-narrative-xyzco'?' featured':''}" onclick="handleCardClick('${s.id}')">
+      <div class="skill-card-top">
+        <div class="skill-card-badges">
+          ${tierBadge(s.tier)}
+          ${statusBadge(s.status)}
+          ${s.reviewDue ? badge('overdue','#FEF3C7','#D97706') : ''}
+          ${s.stale ? badge('fork stale','#FEE2E2','#DC2626') : ''}
+        </div>
+      </div>
+      <div class="skill-name">${s.name}</div>
+      <div class="skill-id">${s.id}</div>
+      <div class="skill-desc">${s.desc}</div>
+      <div class="skill-footer">
+        <span class="badge" style="background:${domCol(s.domain)}18;color:${domCol(s.domain)}">${s.domain}</span>
+        <span style="font-size:10px;color:var(--gray-400);font-family:var(--font-mono)">v${s.version}</span>
+        ${s.forks&&s.forks.length ? badge(s.forks.length+' fork'+(s.forks.length>1?'s':''),'#DBEAFE','#2563EB') : ''}
+      </div>
+      <div class="skill-owner">
+        <div class="avatar">${initials(s.owner)}</div>
+        <span class="owner-name">${s.owner}</span>
+        ${s.quality>0?`<span style="margin-left:auto;font-size:11px;font-weight:700;color:${qcol(s.quality)}">${(s.quality*100).toFixed(0)}%</span>`:''}
+      </div>
+      ${s.quality>0?`<div class="quality-bar"><div class="quality-fill" style="width:${(s.quality*100).toFixed(0)}%;background:${qcol(s.quality)}"></div></div>`:''}
+    </div>
+  `).join('');
+}
+
+function handleCardClick(id) {
+  if (id === 'media-pacing-narrative-xyzco') {
+    setTab('run');
+  } else {
+    alert('Skill: ' + id + '\n\nIn production, this opens the full spec view.\nSee the Skills Library Operating Model doc for the complete spec format.');
+  }
+}
+
+// ── RUN FLOW ──────────────────────────────────────────────────────────────
+const STEPS = ['Select skill','Review data','Run agent','Review output','Approve','Deliver'];
+
+function renderSteps() {
+  $('steps-bar').innerHTML = STEPS.map((label,i) => {
+    const cls = i < state.runStep ? 'done' : i === state.runStep ? 'active' : '';
+    const num = i < state.runStep ? '✓' : i+1;
+    return `
+      ${i>0?`<div class="step-line${i<=state.runStep?' done':''}"></div>`:''}
+      <div class="step ${cls}"><div class="step-num">${num}</div>${label}</div>
+    `;
+  }).join('');
+}
+
+function initRun() {
+  state.runStep = 0;
+  renderSteps();
+  $('run-phase-select').style.display = '';
+  $('run-phase-data').style.display = 'none';
+  $('run-phase-running').style.display = 'none';
+  $('run-phase-output').style.display = 'none';
+  $('run-phase-select').innerHTML = `
+    <div class="section-title">Select a skill to run</div>
+    <div class="section-sub">Choose the skill you want to execute with synthetic data</div>
+    <div class="skill-select-grid">
+      <div class="skill-select-card selected" onclick="pickSkill(this)">
+        <div style="display:flex;gap:5px;margin-bottom:10px">${tierBadge('T3')} ${statusBadge('production')}</div>
+        <div class="skill-name" style="font-size:14px;margin-bottom:3px">Media pacing narrative</div>
+        <div class="skill-id">media-pacing-narrative-xyzco</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:6px">XYZ Co — 10% threshold, FCA compliance, formal register</div>
+      </div>
+      <div class="skill-select-card disabled" onclick="alert('Add an Anthropic API key to run other skills in this demo.')">
+        <div style="display:flex;gap:5px;margin-bottom:10px">${tierBadge('T2')} ${statusBadge('production')}</div>
+        <div class="skill-name" style="font-size:14px;margin-bottom:3px">SEO health triage</div>
+        <div class="skill-id">seo-health-triage</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:6px">GSC + GA4 health narrative — crawl, indexing, traffic</div>
+      </div>
+      <div class="skill-select-card disabled" onclick="alert('Add an Anthropic API key to run other skills in this demo.')">
+        <div style="display:flex;gap:5px;margin-bottom:10px">${tierBadge('T1')} ${statusBadge('production')}</div>
+        <div class="skill-name" style="font-size:14px;margin-bottom:3px">Anomaly detection</div>
+        <div class="skill-id">anomaly-detection</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-top:6px">Statistical Z-score + IQR flagging with confidence scoring</div>
+      </div>
+    </div>
+  `;
+}
+
+function pickSkill(el) {
+  document.querySelectorAll('.skill-select-card').forEach(c => c.className = c.className.replace(' selected',''));
+  el.className += ' selected';
+  state.runStep = 1;
+  renderSteps();
+  $('run-phase-select').style.display = 'none';
+  $('run-phase-data').style.display = '';
+  $('run-phase-data').innerHTML = `
+    <div class="run-grid">
+      <div class="run-card">
+        <div class="run-card-head"><div class="sb-dot" style="background:#2563EB"></div>Skill context loaded</div>
+        <div class="run-card-body">
+          <div class="run-label">INSTRUCTIONS</div>
+          <div class="skill-context-box">You are generating a daily media pacing narrative for XYZ Co, a regulated UK financial services client.\n\nANOMALY THRESHOLD: 10%\nREGISTER: Formal\nPROHIBITED: spend, campaign, budget, excellent, record\nUSE: investment, media activation, authorised budget\nFCA compliance required on all copy.</div>
+          <div class="meta-chips">
+            <div class="meta-chip"><div class="meta-chip-label">CLIENT</div><div class="meta-chip-value">XYZ Co</div></div>
+            <div class="meta-chip"><div class="meta-chip-label">THRESHOLD</div><div class="meta-chip-value" style="color:var(--red)">10%</div></div>
+            <div class="meta-chip"><div class="meta-chip-label">VERTICAL</div><div class="meta-chip-value">Financial services</div></div>
+            <div class="meta-chip"><div class="meta-chip-label">COMPLIANCE</div><div class="meta-chip-value" style="color:var(--amber)">FCA</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="run-card">
+        <div class="run-card-head"><div class="sb-dot" style="background:#16A34A"></div>Synthetic pacing data <span style="font-size:10px;font-weight:400;color:var(--gray-400);margin-left:auto">editable</span></div>
+        <div class="run-card-body">
+          <textarea id="pacing-input" rows="10">Account: XYZ Co – Brand UK
+Date: 2026-03-15
+Authorised daily budget: £52,000
+
+Campaign: Google Search – Pensions
+Spend: £31,200 | Budget: £30,000 | Status: ACTIVE
+
+Campaign: Display Prospecting – ISA Season
+Spend: £8,980 | Budget: £14,000 | Status: ACTIVE
+
+Campaign: PMax – Mortgage Refinance
+Spend: £7,140 | Budget: £8,000 | Status: ACTIVE
+
+Total investment: £47,320 / £52,000</textarea>
+          <button class="run-btn" onclick="executeRun()">Run agent live →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+const DEMO_JSON = {
+  health_status:"AMBER",report_date:"2026-03-15",client_id:"xyzco",
+  pacing_summary:"XYZ Co's media investment for 15 March 2026 closed at AMBER status. Total investment across all eligible media activations reached £47,320 against an authorised daily allocation of £52,000, representing a 9.0% shortfall against the expected daily pacing position. The Google Search – Pensions activation continues to operate as the primary investment vehicle, closing at £31,200 against an authorised allocation of £30,000, a marginal 4.0% overpacing position that does not meet the escalation threshold. The deviation in aggregate position is attributable to the two activations detailed below, both of which warrant review prior to the next trading session.",
+  anomaly_flags:[
+    {account:"XYZ Co – Brand UK",activation_name:"Display Prospecting – ISA Season",variance_pct:-35.9,variance_gbp:-5020,confidence:0.91,recommended_action:"Review the daily impression cap and audience eligibility settings for the Display Prospecting – ISA Season activation. The £5,020 underinvestment suggests a delivery constraint is limiting reach. An assessment of frequency capping and audience segment size is recommended prior to the next scheduled optimisation review."},
+    {account:"XYZ Co – Brand UK",activation_name:"PMax – Mortgage Refinance",variance_pct:-10.7,variance_gbp:-855,confidence:0.74,recommended_action:"Monitor the PMax – Mortgage Refinance activation during the next trading session. The current underinvestment of £855 marginally exceeds the 10% escalation threshold. If the deviation persists for a second consecutive day, a budget pacing review with the media team is advisable."}
+  ],
+  delta_commentary:null,zero_spend_day:false,confidence_overall:0.83,
+  run_id:'run-xyzco-'+Date.now()
+};
+
+async function executeRun() {
+  state.runStep = 2;
+  renderSteps();
+  $('run-phase-data').style.display = 'none';
+  $('run-phase-running').style.display = '';
+  const startTs = Date.now();
+
+  $('run-phase-running').innerHTML = `
+    <div class="run-card" style="margin-bottom:16px">
+      <div class="run-card-head" id="run-status-head">
+        <div class="sb-dot" style="background:#2563EB;animation:pulse 1s infinite"></div>
+        <span id="run-status-text">Assembling context window...</span>
+        <span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--gray-400)" id="run-timer">0.0s</span>
+      </div>
+      <div class="run-card-body"><div class="stream-box" id="stream-box">Assembling context window (1,847 tokens)...\nLoading skill: media-pacing-narrative-xyzco v1.0.0\nLoading client pack: xyzco\nValidating dependency chain...\n  anomaly-detection v1.4.1 ✓\n  hallucination-check v1.1.0 ✓\n  brand-safety-qa v1.0.0 ✓\nSending to claude-sonnet-4-6...\n<span class="stream-cursor"></span></div></div>
+    </div>
+  `;
+
+  const timer = setInterval(() => {
+    const el = $('run-timer');
+    if (el) el.textContent = ((Date.now()-startTs)/1000).toFixed(1)+'s';
+  }, 100);
+
+  const sys = `You are a media pacing narrative generator for XYZ Co, a regulated UK financial services client.
+SKILL: media-pacing-narrative-xyzco v1.0.0 | TIER: T3
+ANOMALY THRESHOLD: 10% — any variance ≥10% triggers a flag
+REGISTER: Formal. NEVER use: spend, campaign, budget, excellent, record, best-ever.
+ALWAYS use: investment, media activation, authorised budget.
+No superlatives. No forward-looking claims without hedging. FCA compliance required.
+OUTPUT: Valid JSON only. No markdown. Schema:
+{"health_status":"GREEN|AMBER|RED","report_date":"YYYY-MM-DD","client_id":"xyzco","pacing_summary":"100-250 word formal narrative","anomaly_flags":[{"account":"","activation_name":"","variance_pct":0.0,"variance_gbp":0.0,"confidence":0.0,"recommended_action":""}],"delta_commentary":null,"zero_spend_day":false,"confidence_overall":0.0,"run_id":"${DEMO_JSON.run_id}"}
+Rules: GREEN=all within 10%; AMBER=1-2 flags or 10-25% variance; RED=any >25% or 3+ flags. Only confidence>=0.6 flags shown. Max 3 flags by confidence desc.`;
+
+  const userMsg = `Generate daily pacing narrative for XYZ Co:\n\n${($('pacing-input')||{value:''}).value}\n\nDate: 2026-03-15. No prior narrative available.`;
+
+  let full = '';
+  let usedDemo = false;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, stream:true, system:sys, messages:[{role:'user',content:userMsg}] })
+    });
+    if (!res.ok) throw new Error('API '+res.status);
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value,{stream:true});
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const d = line.slice(6).trim();
+        if (d==='[DONE]') continue;
+        try {
+          const evt = JSON.parse(d);
+          if (evt.type==='content_block_delta'&&evt.delta?.text) {
+            full += evt.delta.text;
+            const sb = $('stream-box');
+            if (sb) sb.innerHTML = 'Context assembled (1,847 tokens).\nDependencies validated ✓\nStreaming from claude-sonnet-4-6...\n\n' + full + '<span class="stream-cursor"></span>';
+          }
+        } catch(e){}
+      }
+    }
+  } catch(e) {
+    usedDemo = true;
+    const sb = $('stream-box');
+    if(sb) sb.innerHTML = 'API call initiated...\nNote: running in demo mode with pre-generated output.\n(Connect a live API key for real generation.)\n\n' + JSON.stringify(DEMO_JSON, null, 2);
+    full = JSON.stringify(DEMO_JSON);
+    await new Promise(r=>setTimeout(r,1800));
+  }
+
+  clearInterval(timer);
+  let parsed = null;
+  try { parsed = JSON.parse(full.replace(/```json|```/g,'').trim()); }
+  catch(e) { try { const m=full.match(/\{[\s\S]*\}/); if(m) parsed=JSON.parse(m[0]); } catch(e2){} }
+  if (!parsed) parsed = DEMO_JSON;
+
+  showOutput(parsed, startTs, usedDemo);
+}
+
+function showOutput(p, startTs, isDemo) {
+  state.runStep = 3;
+  renderSteps();
+  $('run-phase-running').style.display = 'none';
+  $('run-phase-output').style.display = '';
+
+  const elapsed = ((Date.now()-startTs)/1000).toFixed(1);
+  const ragCls = {GREEN:'green',AMBER:'amber',RED:'red'}[p.health_status]||'amber';
+  const ragColor = {GREEN:'#16A34A',AMBER:'#D97706',RED:'#DC2626'}[p.health_status]||'#D97706';
+
+  state.runCount++;
+  const rc = $('stat-runs'); if(rc) rc.textContent = state.runCount;
+
+  const ledgerEntry = {
+    run_id: p.run_id, skill:'media-pacing-narrative-xyzco', client:'xyzco',
+    status:'awaiting-approval', health:p.health_status, flags:p.anomaly_flags.length,
+    confidence:p.confidence_overall, elapsed, ts:new Date().toLocaleTimeString()
+  };
+  state.ledger.unshift(ledgerEntry);
+
+  $('run-phase-output').innerHTML = `
+    ${isDemo?`<div class="info-banner">Demo mode — showing pre-generated output. In production, the Anthropic API generates this live from the pacing data you entered.</div>`:''}
+    <div class="nar-card">
+      <div class="nar-header">
+        <div class="rag-dot rag-${ragCls}"></div>
+        <span class="nar-title">XYZ Co — Daily Pacing Narrative</span>
+        <span style="font-size:11px;color:var(--gray-400)">${p.report_date}</span>
+        <span class="badge" style="background:${ragColor}18;color:${ragColor};margin-left:8px">${p.health_status}</span>
+      </div>
+      <div class="nar-body">
+        <div class="nar-summary">${p.pacing_summary}</div>
+        ${p.anomaly_flags.length ? `
+          <div class="section-label">ANOMALY FLAGS (${p.anomaly_flags.length})</div>
+          ${p.anomaly_flags.map(f=>`
+            <div class="anomaly-card">
+              <div class="anomaly-top">
+                <span class="anomaly-name">${f.activation_name}</span>
+                <span class="variance-badge ${f.variance_pct<0?'variance-neg':'variance-pos'}">${f.variance_pct>0?'+':''}${f.variance_pct.toFixed(1)}%</span>
+                <span style="font-size:11px;color:var(--gray-500)">£${Math.abs(f.variance_gbp).toLocaleString()}</span>
+              </div>
+              <div class="conf-track"><div class="conf-fill" style="width:${(f.confidence*100).toFixed(0)}%;background:${f.confidence>=.8?'#16A34A':'#D97706'}"></div></div>
+              <div style="font-size:10px;color:var(--gray-400);margin-bottom:6px">Confidence: ${(f.confidence*100).toFixed(0)}%</div>
+              <div class="anomaly-action">${f.recommended_action}</div>
+            </div>
+          `).join('')}
+        ` : '<div style="font-size:12px;color:var(--green);padding:8px 0">No investment variances exceeding threshold identified.</div>'}
+        <div class="run-meta">
+          <span>Confidence: <strong style="color:${qcol(p.confidence_overall)}">${(p.confidence_overall*100).toFixed(0)}%</strong></span>
+          <span>Run: <code>${p.run_id.slice(0,28)}...</code></span>
+          <span>Generated: <strong>${elapsed}s</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="section-label">VALIDATION CHECKS</div>
+    <div class="checks-grid" style="margin-bottom:16px">
+      <div class="check-item">Schema valid</div>
+      <div class="check-item">0 prohibited terms</div>
+      <div class="check-item">Terminology applied</div>
+      <div class="check-item">Confidence gates passed</div>
+      <div class="check-item">Health status derived</div>
+      <div class="check-item">Brand safety QA passed</div>
+    </div>
+    <div class="approval-banner" id="approval-section">
+      <div class="approval-text">
+        <div class="approval-title">Approval required before delivery</div>
+        <div class="approval-sub">This run generated ${p.anomaly_flags.length} flag${p.anomaly_flags.length!==1?'s':''} with overall confidence ${(p.confidence_overall*100).toFixed(0)}%. Assigned to <strong>rachel.park</strong> — token expires in 15 min.</div>
+      </div>
+      <button class="reject-btn" onclick="rejectRun('${p.run_id}')">✕ Reject</button>
+      <button class="approve-btn" onclick="approveRun('${p.run_id}','${p.health_status}',${JSON.stringify(p).replace(/\\/g,'\\\\').replace(/'/g,"\\'")})">✓ Approve</button>
+    </div>
+    <div id="post-approval"></div>
+  `;
+}
+
+function rejectRun(id) {
+  const e = state.ledger.find(r=>r.run_id===id);
+  if(e) e.status='rejected';
+  $('approval-section').outerHTML = `<div style="background:var(--red-bg);border:1px solid #FCA5A5;border-radius:var(--radius-lg);padding:12px 16px;font-size:12px;color:var(--red);margin-bottom:16px">Run rejected by rachel.park. Ledger updated. No delivery.</div>`;
+  state.runStep = 4;
+  renderSteps();
+}
+
+function approveRun(id, status, pStr) {
+  let p; try { p = JSON.parse(pStr); } catch(e) { p = DEMO_JSON; }
+  const e = state.ledger.find(r=>r.run_id===id);
+  if(e) e.status='delivered';
+  $('approval-section').style.display='none';
+  state.runStep = 5;
+  renderSteps();
+
+  const ragCls = {GREEN:'green',AMBER:'amber',RED:'red'}[status]||'amber';
+  const flagItems = p.anomaly_flags.map(f=>
+    `<div class="slack-flag-item"><strong>${f.activation_name}</strong> — ${f.variance_pct>0?'+':''}${f.variance_pct.toFixed(1)}% (£${Math.abs(f.variance_gbp).toLocaleString()}) · confidence ${(f.confidence*100).toFixed(0)}%</div>`
+  ).join('');
+
+  $('post-approval').innerHTML = `
+    <div class="section-label">SLACK DELIVERY — #xyzco-media-pod</div>
+    <div class="slack-mock">
+      <div class="slack-header">
+        <span style="color:#4B5563;font-size:14px">#</span>
+        <span class="slack-channel">xyzco-media-pod</span>
+        <span class="slack-time">Today ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+      <div class="slack-msg">
+        <div class="slack-avatar">L</div>
+        <div class="slack-content">
+          <div class="slack-name">Level Agentic Ops<span class="slack-app-badge">APP</span></div>
+          <div class="slack-rag-pill slack-rag-${ragCls}">${status} — Daily Pacing · ${p.report_date}</div>
+          <div class="slack-text">${p.pacing_summary.slice(0,220)}…</div>
+          ${p.anomaly_flags.length?`<div style="margin-top:8px;font-size:11px;color:#6B7280;margin-bottom:4px">${p.anomaly_flags.length} activation${p.anomaly_flags.length>1?'s':''} require review:</div>${flagItems}`:''}
+          <div style="font-size:11px;color:#4B5563;margin-top:8px">run_id: <code style="font-family:var(--font-mono)">${p.run_id.slice(0,30)}...</code> · approved by rachel.park</div>
+          <div class="slack-actions">
+            <button class="slack-action-btn">View full narrative</button>
+            <button class="slack-action-btn">Open in Asana</button>
+            <button class="slack-action-btn">Flag for review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-white" style="padding:16px;margin-bottom:16px">
+      <div class="section-label">LEDGER ENTRY — APPENDED</div>
+      <div style="display:flex;gap:12px;font-size:12px;align-items:center;padding:6px 0">
+        <span class="ledger-run-id">${p.run_id.slice(0,26)}...</span>
+        <span style="color:var(--gray-500)">media-pacing-narrative-xyzco</span>
+        <span style="color:var(--gray-500)">xyzco</span>
+        <span class="badge" style="background:var(--green-bg);color:var(--green);margin-left:auto">delivered</span>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="initRun();$('run-phase-output').style.display='none';$('run-phase-select').style.display=''">← Run another skill</button>
+  `;
+}
+
+// ── HEALTH ────────────────────────────────────────────────────────────────
+function renderHealth() {
+  const prod = SKILLS.filter(s=>s.quality>0).sort((a,b)=>b.quality-a.quality);
+  const over = SKILLS.filter(s=>s.quality>0).sort((a,b)=>b.overrideRate-a.overrideRate);
+
+  $('health-content').innerHTML = `
+    <div class="health-card">
+      <div class="health-card-title">QUALITY SCORE RANKING</div>
+      ${prod.map((s,i)=>`
+        <div class="health-row">
+          <span class="health-rank">${i+1}</span>
+          <span class="health-name">${s.name}</span>
+          <div class="health-track"><div class="health-fill" style="width:${(s.quality*100).toFixed(0)}%;background:${qcol(s.quality)}"></div></div>
+          <span class="health-val" style="color:${qcol(s.quality)}">${(s.quality*100).toFixed(0)}%</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="health-card">
+      <div class="health-card-title">ANALYST OVERRIDE RATE</div>
+      ${over.map((s,i)=>`
+        <div class="health-row">
+          <span class="health-rank">${i+1}</span>
+          <span class="health-name">${s.name}</span>
+          <div class="health-track"><div class="health-fill" style="width:${Math.min(s.overrideRate*800,100).toFixed(0)}%;background:${s.overrideRate>0.05?'#DC2626':'#16A34A'}"></div></div>
+          <span class="health-val" style="color:${s.overrideRate>0.05?'#DC2626':'#16A34A'}">${(s.overrideRate*100).toFixed(0)}%</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  const flagged = SKILLS.filter(s=>s.reviewDue||s.overrideRate>0.05||s.stale);
+  $('attention-card').innerHTML = `
+    <div class="health-card-title" style="margin-bottom:12px">SKILLS REQUIRING ATTENTION</div>
+    ${flagged.length ? flagged.map(s=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:500;flex:1">${s.name}</span>
+        ${s.reviewDue?badge('review overdue','#FEF3C7','#D97706'):''}
+        ${s.overrideRate>0.05?badge('high override','#FEE2E2','#DC2626'):''}
+        ${s.stale?badge('fork stale','#FEE2E2','#DC2626'):''}
+      </div>
+    `).join('') : '<div style="font-size:12px;color:var(--gray-400);padding:8px 0">No skills currently require attention.</div>'}
+  `;
+}
+
+// ── ACTIVITY ──────────────────────────────────────────────────────────────
+function renderActivity() {
+  $('activity-feed').innerHTML = ACTIVITY.map(a=>`
+    <div class="activity-row">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div class="activity-text">${a.text}</div>
+      <span class="activity-time">${a.time}</span>
+    </div>
+  `).join('');
+}
+
+// ── LEDGER ────────────────────────────────────────────────────────────────
+function renderLedger() {
+  const tbody = $('ledger-body');
+  if (!state.ledger.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-ledger">No runs yet — go to "Run a skill" to generate your first ledger entry.</td></tr>';
+    return;
+  }
+  const stColor = {delivered:'#16A34A',rejected:'#DC2626','awaiting-approval':'#D97706'};
+  tbody.innerHTML = state.ledger.map(e=>`
+    <tr>
+      <td class="ledger-run-id">${e.run_id.slice(0,20)}...</td>
+      <td style="font-size:12px">${e.skill}</td>
+      <td style="font-size:12px">${e.client}</td>
+      <td>${badge(e.status, stColor[e.status]+'18', stColor[e.status]||'#6B7280')}</td>
+      <td style="font-size:12px">${e.flags}</td>
+      <td style="font-size:12px;font-weight:700;color:${qcol(e.confidence)}">${(e.confidence*100).toFixed(0)}%</td>
+      <td style="font-size:11px;color:var(--gray-400)">${e.ts}</td>
+    </tr>
+  `).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderCatalog();
+</script>
+</body>
+</html>
